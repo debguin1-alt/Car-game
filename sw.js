@@ -1,13 +1,14 @@
 const CACHE = "car-game-v5";
 const FILES = [
-  "index.html",
-  "style.css",
-  "script.js",
-  "images/car.png",
-  "images/traffic.png",
-  "images/road.png",
-  "sounds/crash.mp3",
-  "sounds/drive.mp3"
+  "./"
+  "./index.html",
+  "./style.css",
+  "./script.js",
+  "./images/car.png",
+  "./images/traffic.png",
+  "./images/road.png",
+  "./sounds/crash.mp3",
+  "./sounds/drive.mp3"
 ];
 
 self.addEventListener("install", e => {
