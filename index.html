@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Car Ride</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimal-ui">
+<link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<h2>🚗 Highway Drive</h2>
+<p>
+Score: <span id="score">0</span> |
+Level: <span id="level">1</span>
+</p>
+
+<div id="game">
+  <div class="road"></div>
+  <div class="road"></div>
+  <img id="car" src="images/car.png">
+</div>
+
+<div class="controls">
+  <button id="left">⬅️</button>
+  <button id="right">➡️</button>
+</div>
+
+<button id="replay" hidden>🔁 Replay</button>
+<p id="status"></p>
+
+<audio id="crashSound" src="sounds/crash.mp3"></audio>
+<audio id="driveSound" src="sounds/drive.mp3" loop></audio>
+
+<script src="script.js"></script>
+</body>
+</html>
