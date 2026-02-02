@@ -48,6 +48,31 @@ body {
   bottom: 20px;
   left: 150px;
 }
+#controls {
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  pointer-events: auto;
+}
+
+#controls button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: bold;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  backdrop-filter: blur(6px);
+}
+
+#controls button:active {
+  background: rgba(255, 255, 255, 0.4);
+}
 
 .traffic {
   position: absolute;
