@@ -18,6 +18,8 @@ let level = 1;
 let traffic = [];
 let powerUp = null;
 let shield = false;
+let moveLeft = false;
+let moveRight = false;
 
 const challenges = {
   1: "Reach 200 score",
@@ -61,6 +63,14 @@ function levelUp() {
   message.style.display = "block";
   setTimeout(() => message.style.display = "none", 1500);
 }
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+
+leftBtn.addEventListener("touchstart", () => moveLeft = true);
+leftBtn.addEventListener("touchend", () => moveLeft = false);
+
+rightBtn.addEventListener("touchstart", () => moveRight = true);
+rightBtn.addEventListener("touchend", () => moveRight = false);
 
 function gameLoop() {
   road.style.top = (road.offsetTop + speed) % -640 + "px";
