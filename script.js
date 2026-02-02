@@ -79,6 +79,8 @@ function gameLoop() {
 
   spawnTraffic();
   spawnPowerUp();
+  if (moveLeft) playerX -= 5;
+if (moveRight) playerX += 5;
 
   traffic.forEach((t, i) => {
     t.style.top = t.offsetTop + speed + "px";
