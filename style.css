@@ -1,47 +1,35 @@
 * {
   box-sizing: border-box;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  background: #000;
-  font-family: Arial, Helvetica, sans-serif;
+  background: black;
+  font-family: Arial, sans-serif;
   overflow: hidden;
 }
 
-/* HUD */
 #hud {
-  color: #fff;
+  color: white;
   text-align: center;
   padding: 6px;
-  font-size: 16px;
 }
 
-#challengeText {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-/* GAME */
 #game {
   position: relative;
   width: 360px;
   height: 640px;
-  margin: 0 auto;
+  margin: auto;
   overflow: hidden;
-  background: #000;
 }
 
 #road {
   position: absolute;
   width: 100%;
   top: -640px;
-  left: 0;
 }
 
-/* PLAYER */
 #player {
   position: absolute;
   width: 48px;
@@ -50,27 +38,22 @@ body {
   z-index: 5;
 }
 
-/* TRAFFIC */
 .traffic {
   position: absolute;
   width: 48px;
-  z-index: 4;
 }
 
-/* FINISH LINE */
 #finishLine {
   position: absolute;
   width: 100%;
   top: -800px;
   display: none;
-  z-index: 3;
 }
 
-/* CONTROLS */
 #controls {
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
+  padding: 10px;
 }
 
 #controls button {
@@ -79,54 +62,31 @@ body {
   font-size: 28px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.2);
   color: white;
 }
 
-/* OVERLAY */
 #overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(0,0,0,0.9);
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  z-index: 9999;
-}
-
-#overlay h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
-}
-
-#overlay p {
-  font-size: 18px;
-  margin-bottom: 20px;
-  white-space: pre-line;
+  z-index: 999;
 }
 
 #overlay button {
-  padding: 12px 28px;
+  padding: 12px 26px;
   font-size: 18px;
+  background: #ffcc00;
   border: none;
   border-radius: 6px;
-  background: #ffcc00;
-  color: #000;
-  font-weight: bold;
   margin: 6px;
 }
 
 .hidden {
   display: none;
-}
-
-/* RESPONSIVE */
-@media (max-width: 400px) {
-  #game {
-    width: 100vw;
-    height: 80vh;
-  }
 }
