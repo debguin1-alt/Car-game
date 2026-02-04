@@ -1,6 +1,6 @@
-/*************************
+/*********************************
  * ELEMENTS
- *************************/
+ *********************************/
 const game = document.getElementById("game");
 const road = document.getElementById("road");
 const player = document.getElementById("player");
@@ -21,22 +21,23 @@ const restartBtn = document.getElementById("restartBtn");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
-/*************************
- * AUDIO (SAFE)
- *************************/
+/*********************************
+ * AUDIO (MOBILE SAFE)
+ *********************************/
 const driveSound = new Audio("./sounds/drive.mp3");
 const crashSound = new Audio("./sounds/crash.mp3");
 driveSound.loop = true;
+driveSound.volume = 0.6;
 
-/*************************
- * GAME CONSTANTS
- *************************/
+/*********************************
+ * CONSTANTS
+ *********************************/
 const LANES = [60, 156, 252];
-const PLAYER_Y_OFFSET = 120;
+const PLAYER_BOTTOM = 120;
 
-/*************************
+/*********************************
  * GAME STATE
- *************************/
+ *********************************/
 let gameState = "menu";
 let level = 1;
 let score = 0;
@@ -48,52 +49,82 @@ let currentX = targetX;
 
 let roadY = -640;
 let finishY = -800;
-
 let traffic = [];
 
-/*************************
- * LEVEL SETTINGS
- *************************/
+/*********************************
+ * LEVEL DATA
+ *********************************/
 const LEVELS = {
   1: { target: 40, speed: 4 },
   2: { target: 70, speed: 5 },
-  3: { target: 100, speed: 6 }
+  3: { target: 110, speed: 6 }
 };
 
-/*************************
- * CONTROLS
- *************************/
-leftBtn.onclick = () => {
+/*********************************
+ * HELPERS
+ *********************************/
+function vibrate(ms = 30) {
+  if (navigator.vibrate) navigator.vibrate(ms);
+}
+
+function fadeIn(el) {
+  el.style.opacity = 0;
+  el.classList.remove("hidden");
+  let o = 0;
+  const id = setInterval(() => {
+    o += 0.08;
+    el.style.opacity = o;
+    if (o >= 1) clearInterval(id);
+  }, 16);
+}
+
+function fadeOut(el) {
+  let o = 1;
+  const id = setInterval(() => {
+    o -= 0.08;
+    el.style.opacity = o;
+    if (o <= 0) {
+      clearInterval(id);
+      el.classList.add("hidden");
+    }
+  }, 16);
+}
+
+/*********************************
+ * INPUT (LANE BASED)
+ *********************************/
+function moveLeft() {
   if (currentLane > 0) {
     currentLane--;
     targetX = LANES[currentLane];
+    vibrate(20);
   }
-};
+}
 
-rightBtn.onclick = () => {
+function moveRight() {
   if (currentLane < 2) {
     currentLane++;
     targetX = LANES[currentLane];
+    vibrate(20);
   }
-};
+}
 
-/*************************
- * BUTTONS
- *************************/
-playBtn.onclick = startLevel;
-nextBtn.onclick = () => {
-  level++;
-  startLevel();
-};
-restartBtn.onclick = () => location.reload();
+leftBtn.addEventListener("touchstart", e => { e.preventDefault(); moveLeft(); });
+rightBtn.addEventListener("touchstart", e => { e.preventDefault(); moveRight(); });
 
-/*************************
- * START LEVEL
- *************************/
-function startLevel() {
+leftBtn.addEventListener("click", moveLeft);
+rightBtn.addEventListener("click", moveRight);
+
+/*********************************
+ * BUTTONS (TOUCH + CLICK)
+ *********************************/
+function startGame() {
+  fadeOut(overlay);
   gameState = "play";
   score = 0;
+
   speed = LEVELS[level]?.speed || 7;
+  challengeText.innerText = "Reach " + (LEVELS[level]?.target ?? "∞");
 
   traffic.forEach(t => t.remove());
   traffic = [];
@@ -101,65 +132,71 @@ function startLevel() {
   finishLine.style.display = "none";
   finishY = -800;
 
-  challengeText.innerText =
-    "Reach " + (LEVELS[level]?.target ?? "∞");
-
-  overlay.classList.add("hidden");
-  nextBtn.classList.add("hidden");
-  restartBtn.classList.add("hidden");
-
   driveSound.play().catch(() => {});
   requestAnimationFrame(gameLoop);
 }
 
-/*************************
- * SPAWN TRAFFIC (LANE BASED)
- *************************/
+playBtn.addEventListener("touchstart", e => { e.preventDefault(); vibrate(40); startGame(); });
+playBtn.addEventListener("click", startGame);
+
+nextBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  vibrate(40);
+  level++;
+  startGame();
+});
+
+restartBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  vibrate(40);
+  location.reload();
+});
+
+/*********************************
+ * TRAFFIC SPAWN
+ *********************************/
 function spawnTraffic() {
   if (Math.random() < 0.035) {
-    const car = document.createElement("img");
-    car.src = "./images/traffic.png";
-    car.className = "traffic";
-    car.dataset.lane = Math.floor(Math.random() * 3);
-    car.style.left = LANES[car.dataset.lane] + "px";
-    car.style.top = "-80px";
-    game.appendChild(car);
-    traffic.push(car);
+    const t = document.createElement("img");
+    t.src = "./images/traffic.png";
+    t.className = "traffic";
+    t.dataset.lane = Math.floor(Math.random() * 3);
+    t.style.left = LANES[t.dataset.lane] + "px";
+    t.style.top = "-80px";
+    game.appendChild(t);
+    traffic.push(t);
   }
 }
 
-/*************************
+/*********************************
  * COLLISION (NO AIR HIT)
- *************************/
-function collision(a, b) {
+ *********************************/
+function hit(a, b) {
   const r1 = a.getBoundingClientRect();
   const r2 = b.getBoundingClientRect();
 
   return (
-    r1.left + 6 < r2.right - 6 &&
-    r1.right - 6 > r2.left + 6 &&
-    r1.top + 10 < r2.bottom - 10 &&
-    r1.bottom - 10 > r2.top + 10
+    r1.left + 8 < r2.right - 8 &&
+    r1.right - 8 > r2.left + 8 &&
+    r1.top + 12 < r2.bottom - 12 &&
+    r1.bottom - 12 > r2.top + 12
   );
 }
 
-/*************************
- * GAME LOOP
- *************************/
+/*********************************
+ * MAIN LOOP
+ *********************************/
 function gameLoop() {
   if (gameState !== "play") return;
 
-  /* ROAD */
   roadY += speed;
   if (roadY >= 0) roadY = -640;
   road.style.top = roadY + "px";
 
-  /* PLAYER SMOOTH MOVE */
   currentX += (targetX - currentX) * 0.15;
   player.style.left = currentX + "px";
-  player.style.bottom = PLAYER_Y_OFFSET + "px";
+  player.style.bottom = PLAYER_BOTTOM + "px";
 
-  /* TRAFFIC */
   spawnTraffic();
 
   traffic.forEach((t, i) => {
@@ -171,12 +208,9 @@ function gameLoop() {
       score++;
     }
 
-    if (collision(player, t)) {
-      endGame();
-    }
+    if (hit(player, t)) return gameOver();
   });
 
-  /* FINISH LINE */
   if (
     score >= (LEVELS[level]?.target ?? Infinity) &&
     finishLine.style.display === "none"
@@ -187,7 +221,6 @@ function gameLoop() {
   if (finishLine.style.display === "block") {
     finishY += speed;
     finishLine.style.top = finishY + "px";
-
     if (finishY > 640) levelComplete();
   }
 
@@ -197,40 +230,38 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-/*************************
- * LEVEL COMPLETE
- *************************/
+/*********************************
+ * END STATES
+ *********************************/
 function levelComplete() {
   gameState = "complete";
   driveSound.pause();
 
   overlayTitle.innerText = "LEVEL COMPLETE";
-  overlayText.innerText =
-    `Level: ${level}\nScore: ${score}`;
+  overlayText.innerText = `Level: ${level}\nScore: ${score}`;
 
-  overlay.classList.remove("hidden");
   nextBtn.classList.remove("hidden");
+  restartBtn.classList.add("hidden");
+  fadeIn(overlay);
 }
 
-/*************************
- * GAME OVER
- *************************/
-function endGame() {
+function gameOver() {
   gameState = "over";
   driveSound.pause();
   crashSound.play().catch(() => {});
+  vibrate(120);
 
   overlayTitle.innerText = "GAME OVER";
-  overlayText.innerText =
-    `Level: ${level}\nScore: ${score}`;
+  overlayText.innerText = `Level: ${level}\nScore: ${score}`;
 
-  overlay.classList.remove("hidden");
   restartBtn.classList.remove("hidden");
+  nextBtn.classList.add("hidden");
+  fadeIn(overlay);
 }
 
-/*************************
- * MENU
- *************************/
+/*********************************
+ * MENU INIT
+ *********************************/
 overlayTitle.innerText = "Highway Drive";
 overlayText.innerText = "Tap Play to Start";
-overlay.classList.remove("hidden");
+fadeIn(overlay);
