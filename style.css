@@ -1,134 +1,169 @@
+/* =========================
+   GLOBAL
+========================= */
 * {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-}
-img {
-  -webkit-user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  pointer-events: none;
-}
-#overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 99;
-  text-align: center;
-}
-
-#overlay button {
-  padding: 12px 25px;
-  margin: 8px;
-  font-size: 18px;
-  border: none;
-  border-radius: 6px;
-}
-
-.hidden {
-  display: none;
-}
-* {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
-  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: #111;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
-  user-select: none;
 }
 
+/* =========================
+   HUD
+========================= */
+#hud {
+  color: #fff;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 16px;
+}
+
+#challengeText {
+  font-size: 14px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+/* =========================
+   GAME AREA
+========================= */
 #game {
   position: relative;
   width: 360px;
   height: 640px;
-  margin: auto;
+  margin: 0 auto;
   overflow: hidden;
-  border-radius: 14px;
+  background: #000;
+  border: 2px solid #111;
 }
 
+/* =========================
+   ROAD
+========================= */
 #road {
   position: absolute;
   width: 100%;
-  height: 200%;
-  top: -100%;
+  height: auto;
+  top: -640px;
+  left: 0;
 }
 
+/* =========================
+   PLAYER CAR
+========================= */
 #player {
   position: absolute;
-  width: 60px;
-  bottom: 20px;
-  left: 150px;
+  width: 48px;
+  height: auto;
+  bottom: 120px;           /* player moved upward */
+  left: 156px;             /* center lane */
+  z-index: 5;
 }
-#controls {
-  position: fixed;
-  bottom: 15vh;
+
+/* =========================
+   TRAFFIC CARS
+========================= */
+.traffic {
+  position: absolute;
+  width: 48px;
+  height: auto;
+  z-index: 4;
+}
+
+/* =========================
+   FINISH LINE
+========================= */
+#finishLine {
+  position: absolute;
   width: 100%;
+  height: auto;
+  top: -800px;
+  left: 0;
+  z-index: 3;
+  display: none;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+#controls {
   display: flex;
-  justify-content: space-between;
-  padding: 0 30px;
-  pointer-events: auto;
+  justify-content: space-around;
+  padding: 10px 0;
 }
 
 #controls button {
   width: 80px;
-  height: 80px;
+  height: 60px;
+  font-size: 28px;
   border-radius: 50%;
-  font-size: 32px;
-  font-weight: bold;
   border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  backdrop-filter: blur(6px);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
 }
 
-#controls button:active {
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.traffic {
-  position: absolute;
-  width: 60px;
-}
-
-.power {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-}
-
-#hud {
-  color: white;
-  font-family: sans-serif;
-  padding: 10px;
+/* =========================
+   OVERLAY (MENU / GAME OVER)
+========================= */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
+  z-index: 99;
 }
-#finishLine {
-  position: absolute;
-  width: 100%;
-  top: -800px;
-  display: none;
 
-#message {
-  position: absolute;
-  top: 40%;
-  width: 100%;
-  text-align: center;
+#overlay h2 {
   font-size: 32px;
+  margin-bottom: 10px;
+}
+
+#overlay p {
+  white-space: pre-line;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   OVERLAY BUTTONS
+========================= */
+#overlay button {
+  padding: 12px 26px;
+  font-size: 18px;
+  border: none;
+  border-radius: 6px;
+  margin: 6px;
+  background: #ffcc00;
+  color: #000;
   font-weight: bold;
-  color: yellow;
+}
+
+/* =========================
+   UTILITY
+========================= */
+.hidden {
   display: none;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 380px) {
+  #game {
+    width: 100vw;
+    height: 80vh;
+  }
 }
