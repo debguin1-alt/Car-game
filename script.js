@@ -1,27 +1,4 @@
 /***********************
- * PWA INSTALL SUPPORT
- ***********************/
-let deferredPrompt = null;
-
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  const installMsg = document.getElementById("message");
-  installMsg.innerText = "Tap here to install the game";
-  installMsg.style.display = "block";
-
-  installMsg.onclick = async () => {
-    installMsg.style.display = "none";
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-    }
-  };
-});
-
-/***********************
  * GAME ELEMENTS
  ***********************/
 const game = document.getElementById("game");
@@ -31,69 +8,92 @@ const player = document.getElementById("player");
 const levelText = document.getElementById("levelText");
 const scoreText = document.getElementById("scoreText");
 const challengeText = document.getElementById("challengeText");
-const message = document.getElementById("message");
+
+const overlay = document.getElementById("overlay");
+const overlayTitle = document.getElementById("overlayTitle");
+const overlayText = document.getElementById("overlayText");
+
+const playBtn = document.getElementById("playBtn");
+const nextBtn = document.getElementById("nextBtn");
+const restartBtn = document.getElementById("restartBtn");
 
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
 /***********************
- * AUDIO (MOBILE SAFE)
+ * AUDIO
  ***********************/
 const driveSound = new Audio("./sounds/drive.mp3");
 const crashSound = new Audio("./sounds/crash.mp3");
 driveSound.loop = true;
 
-let audioStarted = false;
-document.addEventListener("touchstart", () => {
-  if (!audioStarted) {
-    driveSound.play().catch(()=>{});
-    audioStarted = true;
-  }
-}, { once: true });
-
 /***********************
  * GAME STATE
  ***********************/
-let playerX = 150;
-let speed = 4;
-let score = 0;
+let gameState = "menu";
 let level = 1;
+let score = 0;
+let speed = 4;
 
+let playerX = 150;
+let roadY = -640;
 let traffic = [];
-let powerUp = null;
-let shield = false;
-
 let moveLeft = false;
 let moveRight = false;
 
-let roadY = -640;
-let gameOver = false;
-
 /***********************
- * CHALLENGES
+ * LEVEL DATA
  ***********************/
-const challenges = {
-  1: "Reach 200 score",
-  2: "Avoid fast traffic",
-  3: "Survive longer",
-  4: "No crash zone",
-  5: "High speed chaos"
+const levels = {
+  1: { target: 100, speed: 4, text: "Reach 100 score" },
+  2: { target: 200, speed: 5, text: "Traffic is faster" },
+  3: { target: 300, speed: 6, text: "Survive the chaos" }
 };
 
 /***********************
  * CONTROLS
  ***********************/
-leftBtn.addEventListener("touchstart", () => moveLeft = true);
-leftBtn.addEventListener("touchend", () => moveLeft = false);
+leftBtn.ontouchstart = () => moveLeft = true;
+leftBtn.ontouchend = () => moveLeft = false;
 
-rightBtn.addEventListener("touchstart", () => moveRight = true);
-rightBtn.addEventListener("touchend", () => moveRight = false);
+rightBtn.ontouchstart = () => moveRight = true;
+rightBtn.ontouchend = () => moveRight = false;
 
 /***********************
- * SPAWN FUNCTIONS
+ * BUTTONS
+ ***********************/
+playBtn.onclick = () => startLevel();
+nextBtn.onclick = () => {
+  level++;
+  startLevel();
+};
+restartBtn.onclick = () => location.reload();
+
+/***********************
+ * START LEVEL
+ ***********************/
+function startLevel() {
+  gameState = "playing";
+  score = 0;
+  traffic.forEach(t => t.remove());
+  traffic = [];
+
+  speed = levels[level]?.speed || (6 + level);
+  challengeText.innerText = levels[level]?.text || "ENDLESS";
+
+  overlay.classList.add("hidden");
+  nextBtn.classList.add("hidden");
+  restartBtn.classList.add("hidden");
+
+  driveSound.play().catch(()=>{});
+  requestAnimationFrame(gameLoop);
+}
+
+/***********************
+ * SPAWN TRAFFIC
  ***********************/
 function spawnTraffic() {
-  if (Math.random() < 0.025) {
+  if (Math.random() < 0.03) {
     const t = document.createElement("img");
     t.src = "./images/traffic.png";
     t.className = "traffic";
@@ -104,63 +104,32 @@ function spawnTraffic() {
   }
 }
 
-function spawnPowerUp() {
-  if (!powerUp && Math.random() < 0.003) {
-    powerUp = document.createElement("div");
-    powerUp.className = "power";
-    powerUp.style.left = Math.random() * 320 + "px";
-    powerUp.style.top = "-20px";
-    game.appendChild(powerUp);
-  }
-}
-
-/***********************
- * LEVEL UP
- ***********************/
-function levelUp() {
-  level++;
-  speed++;
-  message.innerText = "LEVEL " + level;
-  message.style.display = "block";
-  setTimeout(() => message.style.display = "none", 1200);
-}
-
 /***********************
  * COLLISION
  ***********************/
 function collision(a, b) {
   const r1 = a.getBoundingClientRect();
   const r2 = b.getBoundingClientRect();
-  return !(
-    r1.bottom < r2.top ||
-    r1.top > r2.bottom ||
-    r1.right < r2.left ||
-    r1.left > r2.right
-  );
+  return !(r1.bottom < r2.top || r1.top > r2.bottom || r1.right < r2.left || r1.left > r2.right);
 }
 
 /***********************
  * GAME LOOP
  ***********************/
 function gameLoop() {
-  if (gameOver) return;
+  if (gameState !== "playing") return;
 
-  // Road scroll
   roadY += speed;
   if (roadY >= 0) roadY = -640;
   road.style.top = roadY + "px";
 
-  // Player movement
   if (moveLeft) playerX -= 8;
   if (moveRight) playerX += 8;
-
   playerX = Math.max(0, Math.min(300, playerX));
   player.style.left = playerX + "px";
 
   spawnTraffic();
-  spawnPowerUp();
 
-  // Traffic logic
   traffic.forEach((t, i) => {
     t.style.top = t.offsetTop + speed + "px";
 
@@ -171,38 +140,53 @@ function gameLoop() {
     }
 
     if (collision(player, t)) {
-      if (shield) {
-        shield = false;
-        t.remove();
-        traffic.splice(i, 1);
-      } else {
-        crashSound.play();
-        gameOver = true;
-        message.innerText = "GAME OVER\nScore: " + score;
-        message.style.display = "block";
-        setTimeout(() => location.reload(), 1500);
-      }
+      crashSound.play();
+      gameOver();
     }
   });
 
-  // Power-up logic
-  if (powerUp) {
-    powerUp.style.top = powerUp.offsetTop + speed + "px";
-    if (collision(player, powerUp)) {
-      shield = true;
-      powerUp.remove();
-      powerUp = null;
-    }
+  if (score >= (levels[level]?.target || 99999)) {
+    levelComplete();
+    return;
   }
-
-  // Level progress
-  if (score >= level * 200) levelUp();
 
   levelText.innerText = level;
   scoreText.innerText = score;
-  challengeText.innerText = challenges[level] || "ENDLESS";
 
   requestAnimationFrame(gameLoop);
 }
 
-gameLoop();
+/***********************
+ * LEVEL COMPLETE
+ ***********************/
+function levelComplete() {
+  gameState = "levelComplete";
+  driveSound.pause();
+
+  overlayTitle.innerText = "Level Complete!";
+  overlayText.innerText = `Score: ${score}`;
+  overlay.classList.remove("hidden");
+
+  nextBtn.classList.remove("hidden");
+}
+
+/***********************
+ * GAME OVER
+ ***********************/
+function gameOver() {
+  gameState = "gameOver";
+  driveSound.pause();
+
+  overlayTitle.innerText = "Game Over";
+  overlayText.innerText = `Score: ${score}`;
+  overlay.classList.remove("hidden");
+
+  restartBtn.classList.remove("hidden");
+}
+
+/***********************
+ * START MENU
+ ***********************/
+overlayTitle.innerText = "Highway Drive";
+overlayText.innerText = "Tap Play to Start";
+overlay.classList.remove("hidden");
