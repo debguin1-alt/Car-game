@@ -18,11 +18,6 @@ const restartBtn = document.getElementById("restartBtn");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
-/* AUDIO */
-const driveSound = new Audio("./sounds/drive.mp3");
-const crashSound = new Audio("./sounds/crash.mp3");
-driveSound.loop = true;
-
 /* CONSTANTS */
 const LANES = [60, 156, 252];
 const PLAYER_BOTTOM = 120;
@@ -34,14 +29,15 @@ let score = 0;
 let speed = 4;
 
 let currentLane = 1;
-let targetX = LANES[currentLane];
-let currentX = targetX;
+let currentX = LANES[currentLane];
+let targetX = currentX;
 
 let roadY = -640;
 let finishY = -800;
 let traffic = [];
+let canCollide = false;
 
-/* LEVEL CONFIG */
+/* LEVELS */
 const LEVELS = {
   1: { target: 40, speed: 4 },
   2: { target: 70, speed: 5 },
@@ -49,56 +45,47 @@ const LEVELS = {
 };
 
 /* INPUT */
-function moveLeft() {
+leftBtn.onclick = () => {
   if (currentLane > 0) {
     currentLane--;
     targetX = LANES[currentLane];
   }
-}
+};
 
-function moveRight() {
+rightBtn.onclick = () => {
   if (currentLane < 2) {
     currentLane++;
     targetX = LANES[currentLane];
   }
-}
-
-leftBtn.addEventListener("touchstart", e => { e.preventDefault(); moveLeft(); });
-rightBtn.addEventListener("touchstart", e => { e.preventDefault(); moveRight(); });
+};
 
 /* BUTTONS */
-playBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  startLevel();
-});
-
-nextBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  level++;
-  startLevel();
-});
-
-restartBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  location.reload();
-});
+playBtn.onclick = startLevel;
+nextBtn.onclick = () => { level++; startLevel(); };
+restartBtn.onclick = () => location.reload();
 
 /* START LEVEL */
 function startLevel() {
   gameState = "play";
   score = 0;
-  speed = LEVELS[level]?.speed || 7;
+  speed = LEVELS[level]?.speed || 6;
+  challengeText.innerText = "Reach " + LEVELS[level].target;
 
   traffic.forEach(t => t.remove());
   traffic = [];
 
-  finishLine.style.display = "none";
+  roadY = -640;
   finishY = -800;
+  finishLine.style.display = "none";
 
-  challengeText.innerText = "Reach " + (LEVELS[level]?.target ?? "∞");
+  currentLane = 1;
+  currentX = targetX = LANES[1];
+  player.style.left = currentX + "px";
+
+  canCollide = false;
+  setTimeout(() => canCollide = true, 500); // 🧠 IMPORTANT FIX
 
   overlay.classList.add("hidden");
-  driveSound.play().catch(() => {});
   requestAnimationFrame(gameLoop);
 }
 
@@ -119,11 +106,11 @@ function spawnTraffic() {
 function hit(a, b) {
   const r1 = a.getBoundingClientRect();
   const r2 = b.getBoundingClientRect();
-  return (
-    r1.left + 8 < r2.right - 8 &&
-    r1.right - 8 > r2.left + 8 &&
-    r1.top + 12 < r2.bottom - 12 &&
-    r1.bottom - 12 > r2.top + 12
+  return !(
+    r1.bottom < r2.top + 12 ||
+    r1.top > r2.bottom - 12 ||
+    r1.right < r2.left + 8 ||
+    r1.left > r2.right - 8
   );
 }
 
@@ -150,13 +137,10 @@ function gameLoop() {
       score++;
     }
 
-    if (hit(player, t)) gameOver();
+    if (canCollide && hit(player, t)) gameOver();
   });
 
-  if (
-    score >= (LEVELS[level]?.target ?? Infinity) &&
-    finishLine.style.display === "none"
-  ) {
+  if (score >= LEVELS[level].target && finishLine.style.display === "none") {
     finishLine.style.display = "block";
   }
 
@@ -175,9 +159,8 @@ function gameLoop() {
 /* END STATES */
 function levelComplete() {
   gameState = "complete";
-  driveSound.pause();
   overlayTitle.innerText = "LEVEL COMPLETE";
-  overlayText.innerText = `Level: ${level}\nScore: ${score}`;
+  overlayText.innerText = `Score: ${score}`;
   nextBtn.classList.remove("hidden");
   restartBtn.classList.add("hidden");
   overlay.classList.remove("hidden");
@@ -185,10 +168,8 @@ function levelComplete() {
 
 function gameOver() {
   gameState = "over";
-  driveSound.pause();
-  crashSound.play().catch(() => {});
   overlayTitle.innerText = "GAME OVER";
-  overlayText.innerText = `Level: ${level}\nScore: ${score}`;
+  overlayText.innerText = `Score: ${score}`;
   restartBtn.classList.remove("hidden");
   nextBtn.classList.add("hidden");
   overlay.classList.remove("hidden");
