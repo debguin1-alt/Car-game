@@ -13,6 +13,30 @@ img {
   user-drag: none;
   pointer-events: none;
 }
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+  text-align: center;
+}
+
+#overlay button {
+  padding: 12px 25px;
+  margin: 8px;
+  font-size: 18px;
+  border: none;
+  border-radius: 6px;
+}
+
+.hidden {
+  display: none;
+}
 * {
   margin: 0;
   padding: 0;
