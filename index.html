@@ -1,63 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Highway Drive</title>
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <title>Highway Drive</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
 </head>
 
 <body>
 
-<div id="hud">
-  <div>Level: <span id="levelText">1</span></div>
-  <div>Score: <span id="scoreText">0</span></div>
-  <div id="challengeText"></div>
-</div>
+  <!-- HUD -->
+  <div id="hud">
+    <div>Level: <span id="levelText">1</span></div>
+    <div>Score: <span id="scoreText">0</span></div>
+    <div id="challengeText"></div>
+  </div>
 
-<div id="game">
-  <img id="road" src="./images/road.png">
-  <img id="finishLine" src="./images/finish.png">
-  <img id="player" src="./images/car.png">
-</div>
+  <!-- GAME -->
+  <div id="game">
+    <img id="road" src="./images/road.png" />
+    <img id="finishLine" src="./images/finish.png" />
+    <img id="player" src="./images/car.png" />
+  </div>
 
-<div id="controls">
-  <button id="leftBtn">◀</button>
-  <button id="rightBtn">▶</button>
-</div>
+  <!-- CONTROLS -->
+  <div id="controls">
+    <button id="leftBtn">◀</button>
+    <button id="rightBtn">▶</button>
+  </div>
 
-<div id="overlay" class="hidden">
-  <h2 id="overlayTitle"></h2>
-  <p id="overlayText"></p>
-  <button id="playBtn">Play</button>
-  <button id="nextBtn" class="hidden">Next Level</button>
-  <button id="restartBtn" class="hidden">Restart</button>
-</div>
+  <!-- OVERLAY -->
+  <div id="overlay">
+    <h2 id="overlayTitle">Highway Drive</h2>
+    <p id="overlayText">Tap Play to Start</p>
+    <button id="playBtn">Play</button>
+    <button id="nextBtn" class="hidden">Next Level</button>
+    <button id="restartBtn" class="hidden">Restart</button>
+  </div>
 
-<script src="script.js"></script>
-<script>
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js");
-</script>
+  <script src="script.js"></script>
 
-</body>
-</html>    <div id="overlay" class="hidden">
-  <h2 id="overlayTitle">Highway Drive</h2>
-  <p id="overlayText"></p>
-  <button id="playBtn">Play</button>
-  <button id="nextBtn" class="hidden">Next Level</button>
-  <button id="restartBtn" class="hidden">Restart</button>
-    </div>
-
-<div id="message"></div>
-
-<script src="script.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
-</script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js");
+    }
+  </script>
 
 </body>
 </html>
