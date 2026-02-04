@@ -1,3 +1,6 @@
+/*************************
+ * ELEMENTS
+ *************************/
 const game = document.getElementById("game");
 const road = document.getElementById("road");
 const player = document.getElementById("player");
@@ -18,117 +21,145 @@ const restartBtn = document.getElementById("restartBtn");
 const leftBtn = document.getElementById("leftBtn");
 const rightBtn = document.getElementById("rightBtn");
 
-/********************
- * GAME DATA
- ********************/
-const lanes = [60, 156, 252];
+/*************************
+ * AUDIO (SAFE)
+ *************************/
+const driveSound = new Audio("./sounds/drive.mp3");
+const crashSound = new Audio("./sounds/crash.mp3");
+driveSound.loop = true;
+
+/*************************
+ * GAME CONSTANTS
+ *************************/
+const LANES = [60, 156, 252];
+const PLAYER_Y_OFFSET = 120;
+
+/*************************
+ * GAME STATE
+ *************************/
+let gameState = "menu";
+let level = 1;
+let score = 0;
+let speed = 4;
+
 let currentLane = 1;
-let targetX = lanes[currentLane];
+let targetX = LANES[currentLane];
 let currentX = targetX;
 
-let speed = 4;
-let score = 0;
-let level = 1;
 let roadY = -640;
-let gameState = "menu";
-let traffic = [];
 let finishY = -800;
 
-/********************
- * LEVEL CONFIG
- ********************/
-const levels = {
-  1: { target: 50, speed: 4 },
-  2: { target: 80, speed: 5 },
-  3: { target: 120, speed: 6 }
+let traffic = [];
+
+/*************************
+ * LEVEL SETTINGS
+ *************************/
+const LEVELS = {
+  1: { target: 40, speed: 4 },
+  2: { target: 70, speed: 5 },
+  3: { target: 100, speed: 6 }
 };
 
-/********************
- * INPUT
- ********************/
+/*************************
+ * CONTROLS
+ *************************/
 leftBtn.onclick = () => {
-  if (currentLane > 0) currentLane--;
-  targetX = lanes[currentLane];
+  if (currentLane > 0) {
+    currentLane--;
+    targetX = LANES[currentLane];
+  }
 };
 
 rightBtn.onclick = () => {
-  if (currentLane < 2) currentLane++;
-  targetX = lanes[currentLane];
+  if (currentLane < 2) {
+    currentLane++;
+    targetX = LANES[currentLane];
+  }
 };
 
-/********************
+/*************************
  * BUTTONS
- ********************/
-playBtn.onclick = () => startLevel();
-nextBtn.onclick = () => { level++; startLevel(); };
+ *************************/
+playBtn.onclick = startLevel;
+nextBtn.onclick = () => {
+  level++;
+  startLevel();
+};
 restartBtn.onclick = () => location.reload();
 
-/********************
+/*************************
  * START LEVEL
- ********************/
+ *************************/
 function startLevel() {
   gameState = "play";
   score = 0;
+  speed = LEVELS[level]?.speed || 7;
+
   traffic.forEach(t => t.remove());
   traffic = [];
 
-  speed = levels[level]?.speed || 7;
-  challengeText.innerText = "Reach " + (levels[level]?.target || "∞");
-
   finishLine.style.display = "none";
   finishY = -800;
+
+  challengeText.innerText =
+    "Reach " + (LEVELS[level]?.target ?? "∞");
 
   overlay.classList.add("hidden");
   nextBtn.classList.add("hidden");
   restartBtn.classList.add("hidden");
 
-  requestAnimationFrame(loop);
+  driveSound.play().catch(() => {});
+  requestAnimationFrame(gameLoop);
 }
 
-/********************
- * SPAWN TRAFFIC
- ********************/
+/*************************
+ * SPAWN TRAFFIC (LANE BASED)
+ *************************/
 function spawnTraffic() {
-  if (Math.random() < 0.03) {
-    const t = document.createElement("img");
-    t.src = "./images/traffic.png";
-    t.className = "traffic";
-    t.dataset.lane = Math.floor(Math.random() * 3);
-    t.style.left = lanes[t.dataset.lane] + "px";
-    t.style.top = "-80px";
-    game.appendChild(t);
-    traffic.push(t);
+  if (Math.random() < 0.035) {
+    const car = document.createElement("img");
+    car.src = "./images/traffic.png";
+    car.className = "traffic";
+    car.dataset.lane = Math.floor(Math.random() * 3);
+    car.style.left = LANES[car.dataset.lane] + "px";
+    car.style.top = "-80px";
+    game.appendChild(car);
+    traffic.push(car);
   }
 }
 
-/********************
- * COLLISION (TIGHT)
- ********************/
-function hit(a, b) {
+/*************************
+ * COLLISION (NO AIR HIT)
+ *************************/
+function collision(a, b) {
   const r1 = a.getBoundingClientRect();
   const r2 = b.getBoundingClientRect();
+
   return (
     r1.left + 6 < r2.right - 6 &&
     r1.right - 6 > r2.left + 6 &&
-    r1.top + 8 < r2.bottom - 8 &&
-    r1.bottom - 8 > r2.top + 8
+    r1.top + 10 < r2.bottom - 10 &&
+    r1.bottom - 10 > r2.top + 10
   );
 }
 
-/********************
- * MAIN LOOP
- ********************/
-function loop() {
+/*************************
+ * GAME LOOP
+ *************************/
+function gameLoop() {
   if (gameState !== "play") return;
 
+  /* ROAD */
   roadY += speed;
   if (roadY >= 0) roadY = -640;
   road.style.top = roadY + "px";
 
-  // Smooth lane movement
+  /* PLAYER SMOOTH MOVE */
   currentX += (targetX - currentX) * 0.15;
   player.style.left = currentX + "px";
+  player.style.bottom = PLAYER_Y_OFFSET + "px";
 
+  /* TRAFFIC */
   spawnTraffic();
 
   traffic.forEach((t, i) => {
@@ -140,10 +171,16 @@ function loop() {
       score++;
     }
 
-    if (hit(player, t)) endGame();
+    if (collision(player, t)) {
+      endGame();
+    }
   });
 
-  if (score >= levels[level].target && finishLine.style.display === "none") {
+  /* FINISH LINE */
+  if (
+    score >= (LEVELS[level]?.target ?? Infinity) &&
+    finishLine.style.display === "none"
+  ) {
     finishLine.style.display = "block";
   }
 
@@ -157,31 +194,43 @@ function loop() {
   levelText.innerText = level;
   scoreText.innerText = score;
 
-  requestAnimationFrame(loop);
+  requestAnimationFrame(gameLoop);
 }
 
-/********************
- * END STATES
- ********************/
+/*************************
+ * LEVEL COMPLETE
+ *************************/
 function levelComplete() {
-  gameState = "done";
+  gameState = "complete";
+  driveSound.pause();
+
   overlayTitle.innerText = "LEVEL COMPLETE";
-  overlayText.innerText = `Score: ${score}`;
+  overlayText.innerText =
+    `Level: ${level}\nScore: ${score}`;
+
   overlay.classList.remove("hidden");
   nextBtn.classList.remove("hidden");
 }
 
+/*************************
+ * GAME OVER
+ *************************/
 function endGame() {
   gameState = "over";
+  driveSound.pause();
+  crashSound.play().catch(() => {});
+
   overlayTitle.innerText = "GAME OVER";
-  overlayText.innerText = `Score: ${score}`;
+  overlayText.innerText =
+    `Level: ${level}\nScore: ${score}`;
+
   overlay.classList.remove("hidden");
   restartBtn.classList.remove("hidden");
 }
 
-/********************
+/*************************
  * MENU
- ********************/
+ *************************/
 overlayTitle.innerText = "Highway Drive";
 overlayText.innerText = "Tap Play to Start";
 overlay.classList.remove("hidden");
