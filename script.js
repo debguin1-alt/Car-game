@@ -180,7 +180,8 @@ document.querySelectorAll(".level-btn").forEach(btn => {
 });
 
 replayBtn.onclick = () => {
-  startScreen.style.display = "none";
-gameScreen.style.display = "flex";
+  gameScreen.style.display = "none";
+  startScreen.style.display = "flex";
+};
 
 };
