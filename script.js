@@ -36,10 +36,10 @@ window.onload = () => {
 
   /* ================= LEVELS ================= */
   const LEVELS = {
-    1: { targetScore: 5, speed: 5 },
+    1: { targetScore: 35, speed: 5 },
     2: { time: 20, speed: 5.5 },
-    3: { targetScore: 10, speed: 6 },
-    4: { targetScore: 15, speed: 7 },
+    3: { targetScore: 50, speed: 6 },
+    4: { targetScore: 65, speed: 7 },
     5: { endless: true, speed: 8 }
   };
 
