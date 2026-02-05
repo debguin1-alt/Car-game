@@ -57,7 +57,7 @@ body {
   margin: auto;
   position: relative;
   overflow: hidden;
-  background: black; /* matches road edges */
+  background: #555; /* matches road edges */
 }
 
 .road {
