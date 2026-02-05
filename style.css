@@ -1,113 +1,123 @@
+/* ================= RESET ================= */
 * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #111;
+  background: #000;
+  font-family: Arial, Helvetica, sans-serif;
   color: white;
-  text-align: center;
+  overflow: hidden;
 }
 
-/* ===== SCREENS ===== */
+/* ================= SCREENS ================= */
 .screen {
   position: fixed;
   inset: 0;
   background: #111;
+  display: none;
+  z-index: 10;
+}
+
+.screen.active {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.hud {
-  font-size: 18px;
-  margin-bottom: 5px;
+#gameScreen {
+  background: #000;
+  z-index: 1;
 }
 
-/* ===== MENU ===== */
-.levels {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  width: 80%;
-  max-width: 300px;
+/* ================= START SCREEN ================= */
+#startScreen h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
 }
 
 .level-btn {
-  padding: 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  width: 200px;
+  padding: 12px;
+  margin: 8px 0;
+  background: #222;
+  border: 2px solid #555;
   color: white;
-  cursor: pointer;
+  font-size: 16px;
+  border-radius: 10px;
 }
 
-.level-btn:active {
-  transform: scale(0.95);
-}
-
-/* ===== GAME ===== */
+/* ================= GAME CONTAINER ================= */
 #game {
   width: 320px;
   height: 520px;
   margin: auto;
   position: relative;
   overflow: hidden;
-  background: #555; /* matches road edges */
+  background: #555; /* matches road edge */
 }
 
+/* ================= ROAD ================= */
 .road {
   position: absolute;
   width: 100%;
-  height: 540px;
-  background: url("images/road.png");
+  height: 540px; /* taller than game */
+  background: url("images/road.png") repeat-y;
   background-size: cover;
-  background-repeat: repeat-y;
   top: 0;
   left: 0;
   will-change: transform;
 }
 
+/* ================= CAR ================= */
 #car {
   position: absolute;
+  width: 50px;
+  height: auto;
   bottom: 20px;
-  width: 70px;
-  left: 120px;
-  pointer-events: none;
+  left: 135px;
+  z-index: 5;
 }
 
+/* ================= NPC TRAFFIC ================= */
 .traffic {
   position: absolute;
-  width: 70px;
+  width: 50px;
+  height: auto;
+  z-index: 4;
 }
 
-.controls {
-  margin-top: 15px;
+/* ================= HUD ================= */
+#hud {
+  width: 320px;
+  margin: 6px auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
 }
 
-.controls button {
-  font-size: 40px;
-  padding: 10px 25px;
-  margin: 0 10px;
-  border: none;
-  background: #333;
-  color: white;
-  border-radius: 10px;
+#status {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 18px;
 }
 
 #replay {
-  margin-top: 15px;
-  font-size: 18px;
-  padding: 10px 20px;
-  border: none;
+  margin-top: 10px;
+  padding: 8px 20px;
+  font-size: 16px;
   border-radius: 8px;
-  background: #007bff;
+  background: #222;
   color: white;
+  border: 2px solid #555;
 }
+
+/* ================= LEVEL COMPLETE TEXT ================= */
 #levelText {
   position: absolute;
   top: 50%;
@@ -117,6 +127,29 @@ body {
   font-weight: bold;
   color: yellow;
   text-shadow: 0 0 10px black;
-  display: none;
   z-index: 20;
+  display: none;
+}
+
+/* ================= CONTROLS ================= */
+#controls {
+  width: 320px;
+  margin: 10px auto 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.control-btn {
+  width: 140px;
+  height: 60px;
+  font-size: 28px;
+  background: #222;
+  border: 2px solid #555;
+  border-radius: 14px;
+  color: white;
+  touch-action: none;
+}
+
+.control-btn:active {
+  background: #444;
 }
