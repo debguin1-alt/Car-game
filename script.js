@@ -6,6 +6,7 @@ const gameScreen = document.getElementById("gameScreen");
 const game = document.getElementById("game");
 const roads = document.querySelectorAll(".road");
 const car = document.getElementById("car");
+const levelText = document.getElementById("levelText");
 
 const scoreEl = document.getElementById("score");
 const levelEl = document.getElementById("level");
@@ -172,8 +173,24 @@ function loop() {
 /* ===== END STATES ===== */
 function win() {
   running = false;
-  statusText.textContent = "✅ LEVEL COMPLETE";
-  replayBtn.hidden = false;
+  driveSound.pause();
+
+  levelText.textContent = "LEVEL COMPLETE";
+  levelText.style.display = "block";
+
+  setTimeout(() => {
+    levelText.style.display = "none";
+
+    // Move to next level automatically
+    if (currentLevel < 5) {
+      currentLevel++;
+      resetGame();
+    } else {
+      // Finished last level
+      statusText.textContent = "🏁 ALL LEVELS COMPLETE!";
+      replayBtn.hidden = false;
+    }
+  }, 2500); // 2.5 seconds display
 }
 
 function gameOver() {
