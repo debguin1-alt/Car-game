@@ -12,6 +12,9 @@ const levelEl = document.getElementById("level");
 const statusText = document.getElementById("status");
 const replayBtn = document.getElementById("replay");
 
+const leftBtn = document.getElementById("left");
+const rightBtn = document.getElementById("right");
+
 const crashSound = document.getElementById("crashSound");
 const driveSound = document.getElementById("driveSound");
 
@@ -19,6 +22,10 @@ const driveSound = document.getElementById("driveSound");
 const GAME_HEIGHT = 520;
 const NPC_LANES = [9, 50, 91, 132, 173, 214];
 const HITBOX_PADDING = 20;
+
+const ACCEL = 0.6;
+const FRICTION = 0.85;
+const MAX_SPEED = 6;
 
 /* ===== LEVELS ===== */
 const LEVELS = {
@@ -32,9 +39,11 @@ const LEVELS = {
 /* ===== STATE ===== */
 let roadY = [0, -GAME_HEIGHT];
 let traffic = [];
+
 let carX = 120;
-let carVelocity = 0;
-let steerDir = 0;
+let carVel = 0;
+let steer = 0;
+
 let speed = 5;
 let score = 0;
 let levelTimer = 0;
@@ -63,8 +72,8 @@ function resetGame() {
 
   roadY = [0, -GAME_HEIGHT];
   carX = game.offsetWidth / 2 - car.offsetWidth / 2;
-  carVelocity = 0;
-  steerDir = 0;
+  carVel = 0;
+  steer = 0;
 
   score = 0;
   levelTimer = 0;
@@ -78,19 +87,32 @@ function resetGame() {
 
   car.style.left = carX + "px";
   driveSound.currentTime = 0;
-  driveSound.play().catch(()=>{});
+  driveSound.play().catch(() => {});
 
   requestAnimationFrame(loop);
 }
 
-/* ===== CONTROLS ===== */
-function startLeft(){ steerDir = -1; }
-function startRight(){ steerDir = 1; }
-function stopSteer(){ steerDir = 0; }
+/* ==================================================
+   ✅ BUTTON CONTROLS (THIS IS THE FIX)
+   ================================================== */
 
-document.getElementById("left").onmousedown = startLeft;
-document.getElementById("right").onmousedown = startRight;
-document.onmouseup = stopSteer;
+/* LEFT BUTTON */
+leftBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  steer = -1;
+});
+leftBtn.addEventListener("touchend", () => steer = 0);
+leftBtn.addEventListener("mousedown", () => steer = -1);
+leftBtn.addEventListener("mouseup", () => steer = 0);
+
+/* RIGHT BUTTON */
+rightBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  steer = 1;
+});
+rightBtn.addEventListener("touchend", () => steer = 0);
+rightBtn.addEventListener("mousedown", () => steer = 1);
+rightBtn.addEventListener("mouseup", () => steer = 0);
 
 /* ===== NPC ===== */
 function spawnNPC() {
@@ -111,7 +133,6 @@ function loop() {
 
   levelTimer += 1 / 60;
   const lvl = LEVELS[currentLevel];
-
   if (lvl.targetScore && score >= lvl.targetScore) win();
   if (lvl.time && levelTimer >= lvl.time) win();
 
@@ -121,9 +142,12 @@ function loop() {
     road.style.transform = `translateY(${roadY[i]}px)`;
   });
 
-  carVelocity += steerDir * 0.6;
-  carVelocity *= 0.9;
-  carX += carVelocity;
+  /* SMOOTH BUTTON STEERING */
+  carVel += steer * ACCEL;
+  carVel *= FRICTION;
+  carVel = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, carVel));
+  carX += carVel;
+
   carX = Math.max(0, Math.min(game.offsetWidth - car.offsetWidth, carX));
   car.style.left = carX + "px";
 
