@@ -29,10 +29,10 @@ const MAX_SPEED = 6;
 
 /* ===== LEVELS ===== */
 const LEVELS = {
-  1: { targetScore: 5, speed: 5 },
-  2: { time: 20, speed: 5.5 },
-  3: { targetScore: 10, speed: 6 },
-  4: { targetScore: 15, speed: 7 },
+  1: { targetScore: 25, speed: 5 },
+  2: { time: 30, speed: 5.5 },
+  3: { targetScore: 35, speed: 6 },
+  4: { targetScore: 50, speed: 7 },
   5: { endless: true, speed: 8 }
 };
 
