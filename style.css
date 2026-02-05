@@ -23,7 +23,25 @@ body {
   margin: auto;
   overflow: hidden;
 }
+.screen {
+  position: fixed;
+  inset: 0;
+  background: #111;
+  display: none;
+  z-index: 10;
+}
 
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#gameScreen {
+  z-index: 1;
+  justify-content: flex-start;
+}
 #road {
   position: absolute;
   width: 100%;
