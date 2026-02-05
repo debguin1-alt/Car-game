@@ -67,7 +67,8 @@ body {
   position: absolute;
   width: 100%;
   height: 540px; /* taller than game */
-  background: url("images/road.png") repeat-y;
+  background: url("images/road.png") ;
+    background-repeat:repeat-y;
   background-size: cover;
   top: 0;
   left: 0;
