@@ -1,59 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Highway Drive</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Car Game</title>
 
-<link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<!-- ===== START MENU ===== -->
-<div id="startScreen" class="screen" style="display:flex">
-  <h1>🚗 Highway Drive</h1>
-  <p>Select a Level</p>
+  <!-- ================= START SCREEN ================= -->
+  <div id="startScreen" class="screen active">
+    <h1>🚗 Car Game</h1>
 
-  <div class="levels">
     <button class="level-btn" data-level="1">Level 1</button>
     <button class="level-btn" data-level="2">Level 2</button>
     <button class="level-btn" data-level="3">Level 3</button>
     <button class="level-btn" data-level="4">Level 4</button>
     <button class="level-btn" data-level="5">Level 5</button>
   </div>
-</div>
 
-<!-- ===== GAME SCREEN ===== -->
-<div id="gameScreen" class="screen" style="display:none">
+  <!-- ================= GAME SCREEN ================= -->
+  <div id="gameScreen" class="screen">
 
-  <p class="hud">
-    Score: <span id="score">0</span> |
-    Level: <span id="level">1</span>
-  </p>
+    <!-- HUD -->
+    <div id="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Level: <span id="level">1</span></div>
+    </div>
 
-  <div id="game">
-    
-    <div class="road"></div>
-    <div class="road"></div>
-    
-    <img id="car" src="images/car.png">
-    <div id="levelText">LEVEL COMPLETE</div>
+    <!-- GAME AREA -->
+    <div id="game">
+
+      <!-- ROADS (2 for infinite scroll) -->
+      <div class="road"></div>
+      <div class="road"></div>
+
+      <!-- PLAYER CAR -->
+      <img id="car" src="images/car.png" alt="Car" />
+
+      <!-- LEVEL COMPLETE TEXT -->
+      <div id="levelText">LEVEL COMPLETE</div>
+
+    </div>
+
+    <!-- STATUS / GAME OVER -->
+    <div id="status"></div>
+    <button id="replay" hidden>Replay</button>
+
+    <!-- CONTROLS -->
+    <div id="controls">
+      <button id="left" class="control-btn">◀</button>
+      <button id="right" class="control-btn">▶</button>
+    </div>
+
   </div>
 
-  <div class="controls">
-    <button id="left">⬅️</button>
-    <button id="right">➡️</button>
-  </div>
+  <!-- ================= AUDIO ================= -->
+  <audio id="driveSound" src="drive.mp3" loop></audio>
+  <audio id="crashSound" src="crash.mp3"></audio>
 
-  <button id="replay" hidden>🔁 Back to Menu</button>
-  <p id="status"></p>
-</div>
+  <!-- ================= SCRIPT ================= -->
+  <script src="script.js"></script>
 
-<audio id="crashSound" src="sounds/crash.mp3"></audio>
-<audio id="driveSound" src="sounds/drive.mp3" loop></audio>
-
-<script src="script.js"></script>
 </body>
 </html>
