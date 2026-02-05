@@ -1,168 +1,107 @@
 * {
-  box-sizing: border-box;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  background: black;
   font-family: Arial, sans-serif;
-  overflow: hidden;
-}
-
-#hud {
+  background: #111;
   color: white;
   text-align: center;
-  padding: 6px;
 }
 
-#game {
-  position: relative;
-  width: 360px;
-  height: 640px;
-  margin: auto;
-  overflow: hidden;
-}
+/* ===== SCREENS ===== */
 .screen {
   position: fixed;
   inset: 0;
   background: #111;
-  display: none;
-  z-index: 10;
-}
-
-.screen.active {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-#gameScreen {
-  z-index: 1;
-  justify-content: flex-start;
-}
-#road {
-  position: absolute;
-  width: 100%;
-  top: -640px;
-}
-
-#player {
-  position: absolute;
-  width: 48px;
-  bottom: 120px;
-  left: 156px;
-  z-index: 5;
-}
-
-.traffic {
-  position: absolute;
-  width: 48px;
-}
-
-#finishLine {
-  position: absolute;
-  width: 100%;
-  top: -800px;
-  display: none;
-}
-
-#controls {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px;
-}
-
-#controls button {
-  width: 80px;
-  height: 60px;
-  font-size: 28px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255,255,255,0.2);
-  color: white;
-}
-
-#overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-#overlay button {
-  padding: 12px 26px;
-  font-size: 18px;
-  background: #ffcc00;
-  border: none;
-  border-radius: 6px;
-  margin: 6px;
-}
-
-.hidden {
-  display: none;
-}
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-#startScreen {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-#startScreen h1 {
-  font-size: 36px;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  opacity: 0.8;
-  margin-bottom: 30px;
-}
-
-.levels {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  width: 90%;
-  max-width: 320px;
-}
-
-.level-btn {
-  padding: 15px;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.level-btn small {
-  display: block;
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.level-btn:active {
-  transform: scale(0.96);
 }
 
 .hud {
   font-size: 18px;
   margin-bottom: 5px;
+}
+
+/* ===== MENU ===== */
+.levels {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 80%;
+  max-width: 300px;
+}
+
+.level-btn {
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  cursor: pointer;
+}
+
+.level-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== GAME ===== */
+#game {
+  width: 320px;
+  height: 520px;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+  border: 3px solid white;
+}
+
+.road {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url("images/road.png");
+  background-size: cover;
+  top: 0;
+}
+
+#car {
+  position: absolute;
+  bottom: 20px;
+  width: 70px;
+  left: 120px;
+  pointer-events: none;
+}
+
+.traffic {
+  position: absolute;
+  width: 70px;
+}
+
+.controls {
+  margin-top: 15px;
+}
+
+.controls button {
+  font-size: 40px;
+  padding: 10px 25px;
+  margin: 0 10px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 10px;
+}
+
+#replay {
+  margin-top: 15px;
+  font-size: 18px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #007bff;
+  color: white;
 }
