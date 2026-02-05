@@ -20,6 +20,8 @@ const crashSound = document.getElementById("crashSound");
 const driveSound = document.getElementById("driveSound");
 
 /* ===== CONSTANTS ===== */
+const SAFE_DISTANCE = 140;
+let traffic = [];
 const GAME_HEIGHT = 520;
 const NPC_LANES = [9, 50, 91, 132, 173, 214];
 const HITBOX_PADDING = 20;
@@ -115,18 +117,35 @@ rightBtn.addEventListener("touchend", () => steer = 0);
 rightBtn.addEventListener("mousedown", () => steer = 1);
 rightBtn.addEventListener("mouseup", () => steer = 0);
 
-/* ===== NPC ===== */
+function laneFree(lane, y) {
+  return !traffic.some(t =>
+    t.lane === lane && Math.abs(t.y - y) < SAFE_DISTANCE
+  );
+}
+
+/* ===== SPAWN NPC (PASTE HERE) ===== */
 function spawnNPC() {
   const lane = Math.floor(Math.random() * NPC_LANES.length);
+  if (!laneFree(lane, -140)) return;
+
   const el = document.createElement("img");
   el.src = "images/traffic.png";
   el.className = "traffic";
-  el.style.left = NPC_LANES[lane] + "px";
+  el.style.position = "absolute";
   el.style.top = "-140px";
+  el.style.left = NPC_LANES[lane] + "px";
+
   game.appendChild(el);
 
-  traffic.push({ el, y: -140, speed: speed + 2 });
+  traffic.push({
+    el,
+    lane,
+    y: -140,
+    speed: speed - 1
+  });
 }
+
+/* ===== MAIN LOOP ===== */
 
 /* ===== LOOP ===== */
 function loop() {
