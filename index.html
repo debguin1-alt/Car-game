@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Highway Drive</title>
+<meta charset="UTF-8">
+<title>Highway Drive</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
 </head>
 
 <body>
 
-<div id="startScreen" class="screen active">
+<!-- ===== START MENU ===== -->
+<div id="startScreen" class="screen" style="display:flex">
   <h1>🚗 Highway Drive</h1>
+  <p>Select a Level</p>
 
   <div class="levels">
     <button class="level-btn" data-level="1">Level 1</button>
@@ -23,8 +25,10 @@
   </div>
 </div>
 
-<div id="gameScreen" class="screen">
-  <p>
+<!-- ===== GAME SCREEN ===== -->
+<div id="gameScreen" class="screen" style="display:none">
+
+  <p class="hud">
     Score: <span id="score">0</span> |
     Level: <span id="level">1</span>
   </p>
@@ -40,7 +44,7 @@
     <button id="right">➡️</button>
   </div>
 
-  <button id="replay" hidden>🔁 Replay</button>
+  <button id="replay" hidden>🔁 Back to Menu</button>
   <p id="status"></p>
 </div>
 
