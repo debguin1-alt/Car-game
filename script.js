@@ -1,6 +1,6 @@
 window.onload = () => {
 
-/* ===== ELEMENTS (SAFE) ===== */
+/* ===== ELEMENTS ===== */
 const startScreen = document.getElementById("startScreen");
 const gameScreen = document.getElementById("gameScreen");
 const game = document.getElementById("game");
@@ -15,17 +15,9 @@ const replayBtn = document.getElementById("replay");
 const crashSound = document.getElementById("crashSound");
 const driveSound = document.getElementById("driveSound");
 
-/* ===== FAIL-SAFE CHECK ===== */
-if (!game || roads.length < 2 || !car) {
-  alert("HTML structure error: game elements missing");
-  return;
-}
-
 /* ===== CONSTANTS ===== */
 const GAME_HEIGHT = 520;
-const ROAD_PADDING = 10;
 const NPC_LANES = [9, 50, 91, 132, 173, 214];
-const SAFE_DISTANCE = 140;
 const HITBOX_PADDING = 20;
 
 /* ===== LEVELS ===== */
@@ -40,13 +32,13 @@ const LEVELS = {
 /* ===== STATE ===== */
 let roadY = [0, -GAME_HEIGHT];
 let traffic = [];
-let carX = 0;
+let carX = 120;
 let carVelocity = 0;
 let steerDir = 0;
 let speed = 5;
 let score = 0;
-let currentLevel = 1;
 let levelTimer = 0;
+let currentLevel = 1;
 let running = false;
 
 /* ===== HITBOX ===== */
@@ -77,15 +69,14 @@ function resetGame() {
   score = 0;
   levelTimer = 0;
   running = true;
-
   speed = LEVELS[currentLevel].speed;
 
-  car.style.left = carX + "px";
   scoreEl.textContent = score;
   levelEl.textContent = currentLevel;
   statusText.textContent = "";
   replayBtn.hidden = true;
 
+  car.style.left = carX + "px";
   driveSound.currentTime = 0;
   driveSound.play().catch(()=>{});
 
@@ -133,8 +124,7 @@ function loop() {
   carVelocity += steerDir * 0.6;
   carVelocity *= 0.9;
   carX += carVelocity;
-
-  carX = Math.max(ROAD_PADDING, Math.min(game.offsetWidth - car.offsetWidth - ROAD_PADDING, carX));
+  carX = Math.max(0, Math.min(game.offsetWidth - car.offsetWidth, carX));
   car.style.left = carX + "px";
 
   traffic.forEach((npc, i) => {
@@ -173,8 +163,8 @@ function gameOver() {
 document.querySelectorAll(".level-btn").forEach(btn => {
   btn.onclick = () => {
     currentLevel = Number(btn.dataset.level);
-    startScreen.classList.remove("active");
-    gameScreen.classList.add("active");
+    startScreen.style.display = "none";
+    gameScreen.style.display = "flex";
     resetGame();
   };
 });
