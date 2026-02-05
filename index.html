@@ -11,31 +11,48 @@
 
 <body>
 
-<div id="hud">
-  <div>Level: <span id="levelText">1</span></div>
-  <div>Score: <span id="scoreText">0</span></div>
-  <div id="challengeText"></div>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="screen active">
+  <h1>🚗 Highway Drive</h1>
+  <p class="subtitle">Dodge traffic. Beat challenges.</p>
+
+  <div class="levels">
+    <button class="level-btn" data-level="1">Level 1<br><small>Score 5</small></button>
+    <button class="level-btn" data-level="2">Level 2<br><small>No crash 30s</small></button>
+    <button class="level-btn" data-level="3">Level 3<br><small>Score 15</small></button>
+    <button class="level-btn" data-level="4">Level 4<br><small>Fast traffic</small></button>
+    <button class="level-btn" data-level="5">Level 5<br><small>Endless</small></button>
+  </div>
 </div>
 
-<div id="game">
-  <img id="road" src="./images/road.png">
-  <img id="finishLine" src="./images/finish.png">
-  <img id="player" src="./images/car.png">
+<!-- GAME UI -->
+<div id="gameScreen" class="screen">
+  <p class="hud">
+    Score: <span id="score">0</span> |
+    Level: <span id="level">1</span>
+  </p>
+
+  <div id="game">
+    <div class="road"></div>
+    <div class="road"></div>
+    <img id="car" src="images/car.png">
+  </div>
+
+  <div class="controls">
+    <button id="left">⬅️</button>
+    <button id="right">➡️</button>
+  </div>
+
+  <button id="replay" hidden>🔁 Replay</button>
+  <p id="status"></p>
 </div>
 
-<div id="controls">
-  <button id="leftBtn">◀</button>
-  <button id="rightBtn">▶</button>
-</div>
-
-<div id="overlay">
-  <h2 id="overlayTitle">Highway Drive</h2>
-  <p id="overlayText">Tap Play to Start</p>
-  <button id="playBtn">Play</button>
-  <button id="nextBtn" class="hidden">Next Level</button>
-  <button id="restartBtn" class="hidden">Restart</button>
-</div>
+<audio id="crashSound" src="sounds/crash.mp3"></audio>
+<audio id="driveSound" src="sounds/drive.mp3" loop></audio>
 
 <script src="script.js"></script>
+</body>
 </body>
 </html>
